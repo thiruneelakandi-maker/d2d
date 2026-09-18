@@ -13,6 +13,7 @@ class AIAnalyzeView(APIView):
 
     def post(self, request):
         description = request.data.get('description', '')
+        category_hint = request.data.get('category', '')
         if description is None:
             return Response({'error': 'Invalid JSON or missing description'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -22,7 +23,7 @@ class AIAnalyzeView(APIView):
 
         try:
             # Use ai_service which honors DEMO_MODE and falls back to DB
-            result = ai_service.analyze(description)
+            result = ai_service.analyze(description, category_hint=str(category_hint or ''))
             # Ensure the structured keys
             payload = {
                 'emergency_type': result.get('emergency_type', ''),

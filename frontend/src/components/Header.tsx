@@ -13,14 +13,15 @@ import {
   AlertTriangle,
   X,
   Sun,
-  Moon
+  Moon,
+  ClipboardList
 } from 'lucide-react';
 import { useEmergency } from '../context/EmergencyContext';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 export const Header: React.FC = () => {
-  const { location, refreshLocation, language, setLanguage } = useEmergency();
+  const { location, refreshLocation, language, setLanguage, translate } = useEmergency();
   const { user, isAuthenticated, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const routeLocation = useLocation();
@@ -117,6 +118,19 @@ export const Header: React.FC = () => {
                 <HelpCircle className="w-5 h-5" />
               </button>
 
+              {/* Report link */}
+              <Link
+                to="/report"
+                className={`p-2 rounded-xl transition-colors ${
+                  routeLocation.pathname === '/report'
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+                title={translate('nav.report')}
+              >
+                <ClipboardList className="w-5 h-5" />
+              </Link>
+
               {/* History link */}
               <Link
                 to="/history"
@@ -125,7 +139,7 @@ export const Header: React.FC = () => {
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 font-semibold'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
-                title="Emergency Incident History"
+                title={translate('nav.history')}
               >
                 <History className="w-5 h-5" />
               </Link>
@@ -138,7 +152,7 @@ export const Header: React.FC = () => {
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
-                title="Settings & Emergency Contacts"
+                title={translate('nav.settings')}
               >
                 <Settings className="w-5 h-5" />
               </Link>
@@ -150,7 +164,7 @@ export const Header: React.FC = () => {
                 title="Direct Dial Emergency Services (112 / 911)"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>SOS 112 / 911</span>
+                <span>{translate('nav.sos')}</span>
               </a>
 
               {/* Auth / Profile */}
@@ -163,7 +177,7 @@ export const Header: React.FC = () => {
                     onClick={logout}
                     className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 underline font-medium cursor-pointer"
                   >
-                    Logout
+                    {translate('nav.logout')}
                   </button>
                 </div>
               ) : (

@@ -21,7 +21,7 @@ import { useEmergency } from '../context/EmergencyContext';
 export const EmergencyAnalysis: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { activeEmergency, setActiveEmergency } = useEmergency();
+  const { activeEmergency, setActiveEmergency, translate } = useEmergency();
 
   const [emergency, setEmergency] = useState<EmergencyRequest | null>(activeEmergency);
   const [loading, setLoading] = useState(!activeEmergency);
@@ -52,7 +52,7 @@ export const EmergencyAnalysis: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
         <h2 className="text-xl font-bold text-slate-800">
-          Generating AI Emergency Analysis & RAG Triage...
+          {translate('analysis.loading')}
         </h2>
         <p className="text-sm text-slate-500 mt-1">
           Grounding life-safety instructions against official disaster protocols.
@@ -67,7 +67,7 @@ export const EmergencyAnalysis: React.FC = () => {
         <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-6 h-6" />
         </div>
-        <h3 className="text-lg font-bold text-slate-900">Incident Not Found</h3>
+        <h3 className="text-lg font-bold text-slate-900">{translate('analysis.notFound')}</h3>
         <p className="text-sm text-slate-600 mt-2">{error || 'Emergency incident could not be found.'}</p>
         <Link
           to="/"
@@ -124,21 +124,21 @@ export const EmergencyAnalysis: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
           <div>
             <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">
-              Detected Emergency
+              {translate('analysis.detected')}
             </span>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
               {emergency.emergency_type || ai?.emergency_type || 'Emergency Incident'}
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
-              <span>Reported {new Date(emergency.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <span>{translate('analysis.reported')} {new Date(emergency.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               <span>•</span>
               <span className="capitalize font-bold text-blue-600 dark:text-blue-400">{emergency.status.toLowerCase()}</span>
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-slate-400 uppercase mr-1">Priority:</span>
+            <span className="text-xs font-bold text-slate-400 uppercase mr-1">{translate('analysis.priority')}:</span>
             <PriorityBadge priority={emergency.priority || ai?.priority || 'HIGH'} size="lg" />
           </div>
         </div>
@@ -153,7 +153,7 @@ export const EmergencyAnalysis: React.FC = () => {
         <div className="bg-slate-50 dark:bg-slate-950/70 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-800">
           <div className="flex items-center gap-2 text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
             <FileText className="w-3.5 h-3.5" />
-            <span>Reported Situation</span>
+            <span>{translate('analysis.situation')}</span>
           </div>
           <p className="text-sm sm:text-base text-slate-800 dark:text-slate-200 leading-relaxed italic">
             "{emergency.description}"
@@ -163,7 +163,7 @@ export const EmergencyAnalysis: React.FC = () => {
         {/* AI Situation Summary */}
         {ai?.summary && (
           <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium bg-blue-50/50 dark:bg-blue-950/40 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/60">
-            <strong className="text-blue-900 dark:text-blue-300 block font-bold mb-1">Dispatcher Assessment:</strong>
+            <strong className="text-blue-900 dark:text-blue-300 block font-bold mb-1">{translate('analysis.assessment')}:</strong>
             {ai.summary}
           </div>
         )}
@@ -190,7 +190,7 @@ export const EmergencyAnalysis: React.FC = () => {
             onClick={() => navigate(`/response/${emergency.id}`)}
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-extrabold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
           >
-            <span>Open Full Response & Live Map</span>
+            <span>{translate('analysis.response')}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

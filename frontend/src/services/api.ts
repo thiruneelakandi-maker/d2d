@@ -18,6 +18,13 @@ export const api = axios.create({
   },
 });
 
+export const healthAPI = {
+  check: async (): Promise<{ status: string; message: string }> => {
+    const res = await api.get('/health/');
+    return res.data;
+  },
+};
+
 // Attach JWT access token if available
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('emergency_token');
@@ -59,7 +66,11 @@ export const authAPI = {
 
 export const emergencyAPI = {
   analyze: async (description: string, category?: string): Promise<EmergencyAIResponse> => {
-    const res = await api.post('/emergencies/analyze/', { message: description, language: 'en' });
+    const res = await api.post('/emergencies/analyze/', {
+      message: description,
+      category: category || '',
+      language: 'en',
+    });
     return res.data;
   },
   create: async (data: {
@@ -119,11 +130,31 @@ export const resourcesAPI = {
 };
 
 export const aiAPI = {
+  analyze: async (description: string, category?: string): Promise<EmergencyAIResponse> => {
+    const res = await api.post('/ai/analyze/', {
+      description,
+      category: category || '',
+    });
+    return res.data;
+  },
   chat: async (
     messages: Array<{ role: 'user' | 'assistant'; content: string }>,
     context?: any
   ): Promise<{ reply: string }> => {
     const res = await api.post('/ai/chat/', { messages, context });
+    return res.data;
+  },
+};
+
+export const knowledgeAPI = {
+  listProtocols: async (category?: string, query?: string) => {
+    const res = await api.get('/protocols/', {
+      params: { category, q: query },
+    });
+    return res.data;
+  },
+  getProtocol: async (id: number) => {
+    const res = await api.get(`/protocols/${id}/`);
     return res.data;
   },
 };

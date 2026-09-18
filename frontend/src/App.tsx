@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { EmergencyProvider } from './context/EmergencyContext';
@@ -10,7 +10,14 @@ import { EmergencyResponse } from './pages/EmergencyResponse';
 import { History } from './pages/History';
 import { Settings } from './pages/Settings';
 import { Login } from './pages/Login';
+import { ReportEmergency } from './pages/ReportEmergency';
 import { ShieldAlert, Heart, Radio } from 'lucide-react';
+import { useAuth } from './context/AuthContext';
+
+const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
 export const App: React.FC = () => {
   return (
@@ -25,12 +32,13 @@ export const App: React.FC = () => {
               {/* Main Content Viewport */}
               <main className="flex-1">
                 <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/analyze/:id" element={<EmergencyAnalysis />} />
-                  <Route path="/response/:id" element={<EmergencyResponse />} />
-                  <Route path="/response" element={<EmergencyResponse />} />
-                  <Route path="/history" element={<History />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                  <Route path="/report" element={<ProtectedRoute><ReportEmergency /></ProtectedRoute>} />
+                  <Route path="/analyze/:id" element={<ProtectedRoute><EmergencyAnalysis /></ProtectedRoute>} />
+                  <Route path="/response/:id" element={<ProtectedRoute><EmergencyResponse /></ProtectedRoute>} />
+                  <Route path="/response" element={<ProtectedRoute><EmergencyResponse /></ProtectedRoute>} />
+                  <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="/login" element={<Login />} />
                 </Routes>
               </main>

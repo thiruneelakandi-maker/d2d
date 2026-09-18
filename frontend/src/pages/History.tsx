@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   History as HistoryIcon, 
   Calendar, 
@@ -19,7 +19,9 @@ import { useEmergency } from '../context/EmergencyContext';
 
 export const History: React.FC = () => {
   const navigate = useNavigate();
-  const { setActiveEmergency } = useEmergency();
+  const location = useLocation();
+  const { setActiveEmergency, translate, language } = useEmergency();
+  const successMessage = (location.state as { successMessage?: string } | null)?.successMessage || null;
 
   const [emergencies, setEmergencies] = useState<EmergencyRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -58,12 +60,10 @@ export const History: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <HistoryIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Emergency Incident Log
-            </h1>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{translate('history.title')}</h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Historical record of past emergency triage requests and verified response instructions.
+            {translate('history.subtitle')}
           </p>
         </div>
 
@@ -73,10 +73,16 @@ export const History: React.FC = () => {
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors"
           >
             <PlusCircle className="w-3.5 h-3.5" />
-            <span>New Emergency Request</span>
+            <span>{translate('history.new')}</span>
           </Link>
         </div>
       </div>
+
+      {successMessage && (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">
+          {successMessage}
+        </div>
+      )}
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -90,7 +96,7 @@ export const History: React.FC = () => {
                 : 'bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
             }`}
           >
-            {f.replace('_', ' ')}
+            {f === 'all' ? 'All' : f === 'in_progress' ? 'In Progress' : f.replace('_', ' ')}
           </button>
         ))}
       </div>
@@ -99,27 +105,27 @@ export const History: React.FC = () => {
       {loading ? (
         <div className="py-20 text-center">
           <RefreshCw className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-500 dark:text-slate-400">Retrieving incident records...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{translate('history.loading')}</p>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center space-y-3 transition-colors">
           <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto">
             <FileText className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">No emergency records found</h3>
+          <h3 className="text-base font-bold text-slate-800 dark:text-slate-200">{translate('history.empty')}</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-            Previous emergency requests and AI safety triage reports will appear here automatically.
+            {translate('history.subtitle')}
           </p>
         </div>
       ) : (
         <div className="space-y-3.5">
           {filtered.map((item) => {
-            const dateStr = new Date(item.created_at).toLocaleDateString([], {
+            const dateStr = new Date(item.created_at).toLocaleDateString(language || undefined, {
               month: 'short',
               day: 'numeric',
               year: 'numeric',
             });
-            const timeStr = new Date(item.created_at).toLocaleTimeString([], {
+            const timeStr = new Date(item.created_at).toLocaleTimeString(language || undefined, {
               hour: '2-digit',
               minute: '2-digit',
             });
@@ -163,7 +169,7 @@ export const History: React.FC = () => {
 
                 <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
                   <span className="text-xs font-bold text-blue-600 dark:text-blue-400 group-hover:underline flex items-center gap-1">
-                    <span>View Triage Details</span>
+                    <span>{translate('history.view')}</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
                 </div>

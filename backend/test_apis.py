@@ -37,11 +37,12 @@ token = login_resp.data['access']
 client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
 # 3. Test Emergency Analyze
-analyze_resp = client.post('/api/emergency/analyze/', {
-    'description': 'Head-on car collision on Highway 101, passenger is bleeding heavily from arm and trapped.',
-    'category': 'accident'
+analyze_resp = client.post('/api/emergencies/analyze/', {
+    'message': 'Head-on car collision on Highway 101, passenger is bleeding heavily from arm and trapped.',
+    'category': 'road_accident',
+    'language': 'en'
 }, format='json')
-print(f"3. POST /api/emergency/analyze/ -> Status: {analyze_resp.status_code}")
+print(f"3. POST /api/emergencies/analyze/ -> Status: {analyze_resp.status_code}")
 assert analyze_resp.status_code == 200
 data = analyze_resp.data
 print(f"   Detected Type: {data.get('emergency_type')}")
@@ -50,26 +51,26 @@ print(f"   Confidence: {data.get('confidence')}")
 print(f"   Instructions Count: {len(data.get('immediate_instructions', []))}")
 
 # 4. Test Emergency Create
-create_resp = client.post('/api/emergency/create/', {
+create_resp = client.post('/api/emergencies/create/', {
     'description': 'Head-on car collision on Highway 101, passenger is bleeding heavily from arm and trapped.',
-    'category': 'accident',
+    'category': 'road_accident',
     'latitude': 40.7128,
     'longitude': -74.0060,
     'ai_response': data
 }, format='json')
-print(f"4. POST /api/emergency/create/ -> Status: {create_resp.status_code}")
+print(f"4. POST /api/emergencies/create/ -> Status: {create_resp.status_code}")
 assert create_resp.status_code == 201
 emergency_id = create_resp.data['id']
 print(f"   Created Emergency ID: {emergency_id}")
 
 # 5. Test Emergency History
-history_resp = client.get('/api/emergency/history/')
-print(f"5. GET /api/emergency/history/ -> Status: {history_resp.status_code}, Items: {len(history_resp.data)}")
+history_resp = client.get('/api/emergencies/history/')
+print(f"5. GET /api/emergencies/history/ -> Status: {history_resp.status_code}, Items: {len(history_resp.data)}")
 assert history_resp.status_code == 200
 
 # 6. Test Emergency Detail
-detail_resp = client.get(f'/api/emergency/{emergency_id}/')
-print(f"6. GET /api/emergency/{emergency_id}/ -> Status: {detail_resp.status_code}")
+detail_resp = client.get(f'/api/emergencies/{emergency_id}/')
+print(f"6. GET /api/emergencies/{emergency_id}/ -> Status: {detail_resp.status_code}")
 assert detail_resp.status_code == 200
 
 # 7. Test Emergency Contacts

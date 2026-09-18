@@ -9,6 +9,23 @@ class AIApiTest(TestCase):
         self.client = APIClient()
 
     @override_settings(DEMO_MODE=True)
+    def test_ai_analyze_identifies_multiple_emergency_types(self):
+        EmergencyKnowledge.objects.create(
+            emergency_type='Flood', priority=1, instruction='Move to higher ground immediately', recommended_service='Disaster Management', verification='verified', trusted=True
+        )
+        EmergencyKnowledge.objects.create(
+            emergency_type='Medical Emergency', priority=1, instruction='Call ambulance and provide first aid', recommended_service='Ambulance', verification='verified', trusted=True
+        )
+
+        flood_resp = self.client.post('/api/ai/analyze/', {'description': 'Water is rising rapidly and roads are flooding near the river'}, format='json')
+        self.assertEqual(flood_resp.status_code, 200)
+        self.assertEqual(flood_resp.json()['emergency_type'], 'Flood')
+
+        medical_resp = self.client.post('/api/ai/analyze/', {'description': 'A person is having chest pain and difficulty breathing'}, format='json')
+        self.assertEqual(medical_resp.status_code, 200)
+        self.assertEqual(medical_resp.json()['emergency_type'], 'Medical Emergency')
+
+    @override_settings(DEMO_MODE=True)
     def test_ai_analyze_demo_mode_uses_db(self):
         EmergencyKnowledge.objects.create(
             emergency_type='Fire', priority=1, instruction='Evacuate immediately', recommended_service='Fire Service', verification='verified', trusted=True

@@ -26,4 +26,5 @@ class EmergencyCreateSerializer(serializers.Serializer):
 
 class EmergencyAnalyzeSerializer(serializers.Serializer):
     message = serializers.CharField(required=True)
+    category = serializers.CharField(required=False, allow_blank=True, default='')
     language = serializers.CharField(required=False, default='en')

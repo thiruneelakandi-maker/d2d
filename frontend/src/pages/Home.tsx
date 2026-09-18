@@ -29,7 +29,7 @@ import { WeatherAlertSection } from '../components/WeatherAlertSection';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { location, refreshLocation, setActiveEmergency, setCachedAnalysis } = useEmergency();
+  const { location, refreshLocation, setActiveEmergency, setCachedAnalysis, translate } = useEmergency();
 
   const [description, setDescription] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -39,25 +39,35 @@ export const Home: React.FC = () => {
 
   // Quick situation chips for 1-tap rapid dispatch description
   const quickSituations = [
-    { label: '💔 Chest Pain / Heart Attack', category: 'medical', prompt: 'Severe sudden chest pain, radiating to left arm, shortness of breath and sweating.' },
-    { label: '🩸 Severe Bleeding / Trauma', category: 'medical', prompt: 'Severe uncontrolled arterial bleeding from deep wound. Needs urgent tourniquet/pressure.' },
-    { label: '🚗 Road Crash / Collision', category: 'accident', prompt: 'Two-vehicle collision with passenger trapped inside and smoke rising from engine.' },
-    { label: '🔥 Building Fire / Smoke', category: 'fire', prompt: 'Active structure fire with thick black smoke and people possibly trapped on upper floor.' },
-    { label: '🌊 Flood / Water Hazard', category: 'flood', prompt: 'Rapidly rising flood water entering premises, electrical danger, evacuation needed.' },
-    { label: '🏚️ Collapse / Trapped', category: 'earthquake', prompt: 'Building wall collapse with a person pinned under heavy debris.' },
-    { label: '⚠️ Gas Leak / Toxic Hazard', category: 'chemical', prompt: 'Strong chemical/gas odor causing dizziness, burning eyes, and breathing difficulty.' },
-    { label: '🫁 Severe Asthma / Choking', category: 'medical', prompt: 'Victim is unable to breathe or speak, airway obstructed, cyanosis around lips.' },
+    { label: '🌊 Flood / Rising Water', category: 'flood', prompt: 'Rapidly rising floodwater entering residential area, electrical danger, and families needing evacuation.' },
+    { label: '🔥 Structure Fire / Smoke', category: 'fire', prompt: 'Active structure fire with thick black smoke and people possibly trapped on upper floors.' },
+    { label: '🚗 Road Accident / Crash', category: 'road_accident', prompt: 'Two-vehicle collision on a highway with one person trapped and another bleeding severely.' },
+    { label: '🩺 Medical Emergency', category: 'medical_emergency', prompt: 'Person has severe chest pain, trouble breathing, and is sweating heavily.' },
+    { label: '🌍 Earthquake / Tremor', category: 'earthquake', prompt: 'Strong earthquake shaking with building damage and a person trapped under debris.' },
+    { label: '🌪️ Cyclone / Severe Storm', category: 'cyclone_storm', prompt: 'Severe storm with strong winds, fallen trees, and a roof partially torn off.' },
+    { label: '⛰️ Landslide / Slope Failure', category: 'landslide', prompt: 'Mud and rock slide across the road with vehicles stranded and people trapped nearby.' },
+    { label: '🌊 Tsunami / Coastal Wave', category: 'tsunami', prompt: 'Coastal warning siren sounding with rising water and residents evacuating from low-lying areas.' },
+    { label: '🏚️ Building Collapse', category: 'building_collapse', prompt: 'Part of a building has collapsed and workers may be trapped beneath rubble.' },
+    { label: '🧭 Missing Person', category: 'missing_person', prompt: 'Senior citizen missing since early morning and last seen near a local park.' },
+    { label: '☠️ Gas / Chemical Leak', category: 'gas_chemical_leak', prompt: 'Strong chemical smell causing dizziness, burns, and breathing difficulty in a warehouse.' },
+    { label: '⚡ Electrical Emergency', category: 'electrical_emergency', prompt: 'Downed power line across the street with sparking wires and a nearby pedestrian shocked.' },
+    { label: '❔ Other / Unknown Emergency', category: 'other_unknown', prompt: 'Unclear emergency with visible danger, unknown immediate risks, and people needing urgent support.' },
   ];
 
   const emergencyCategories = [
-    { id: 'fire', name: 'Fire', icon: Flame, color: 'hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400' },
-    { id: 'accident', name: 'Accident', icon: Car, color: 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400' },
-    { id: 'medical', name: 'Medical', icon: HeartPulse, color: 'hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400' },
     { id: 'flood', name: 'Flood', icon: Waves, color: 'hover:border-cyan-500 hover:bg-cyan-50 dark:hover:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400' },
+    { id: 'fire', name: 'Fire', icon: Flame, color: 'hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-600 dark:text-amber-400' },
+    { id: 'road_accident', name: 'Road Accident', icon: Car, color: 'hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400' },
+    { id: 'medical_emergency', name: 'Medical Emergency', icon: HeartPulse, color: 'hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400' },
     { id: 'earthquake', name: 'Earthquake', icon: Activity, color: 'hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' },
+    { id: 'cyclone_storm', name: 'Cyclone / Storm', icon: Zap, color: 'hover:border-violet-500 hover:bg-violet-50 dark:hover:bg-violet-950/40 text-violet-600 dark:text-violet-400' },
+    { id: 'landslide', name: 'Landslide', icon: AlertCircle, color: 'hover:border-stone-500 hover:bg-stone-50 dark:hover:bg-stone-950/40 text-stone-600 dark:text-stone-400' },
+    { id: 'tsunami', name: 'Tsunami', icon: Waves, color: 'hover:border-sky-500 hover:bg-sky-50 dark:hover:bg-sky-950/40 text-sky-600 dark:text-sky-400' },
+    { id: 'building_collapse', name: 'Building Collapse', icon: AlertCircle, color: 'hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-orange-600 dark:text-orange-400' },
     { id: 'missing_person', name: 'Missing Person', icon: UserX, color: 'hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950/40 text-purple-600 dark:text-purple-400' },
-    { id: 'chemical', name: 'Gas / Chemical', icon: Biohazard, color: 'hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-orange-600 dark:text-orange-400' },
-    { id: 'other', name: 'Other', icon: HelpCircle, color: 'hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400' },
+    { id: 'gas_chemical_leak', name: 'Gas / Chemical Leak', icon: Biohazard, color: 'hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-orange-600 dark:text-orange-400' },
+    { id: 'electrical_emergency', name: 'Electrical Emergency', icon: Zap, color: 'hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/40 text-yellow-600 dark:text-yellow-400' },
+    { id: 'other_unknown', name: 'Other / Unknown', icon: HelpCircle, color: 'hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400' },
   ];
 
   // Quick regional helplines
@@ -129,14 +139,14 @@ export const Home: React.FC = () => {
       <section className="pt-8 pb-6 sm:pt-12 sm:pb-8 text-center max-w-3xl mx-auto px-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 text-xs font-bold mb-4 shadow-2xs">
           <Radio className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 animate-pulse" />
-          <span>Real-Time RAG Emergency Dispatch & Triage Engine</span>
+          <span>{translate('home.badge')}</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          How can we help you?
+          {translate('home.title')}
         </h1>
         <p className="mt-2.5 text-base sm:text-lg text-slate-600 dark:text-slate-300 font-normal">
-          Describe your emergency and get immediate, verified life-safety guidance.
+          {translate('home.subtitle')}
         </p>
 
         {/* 1-Tap Quick Helplines Dial Bar */}
@@ -165,7 +175,7 @@ export const Home: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="flex items-center justify-between">
               <label className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <span>Describe the Emergency Situation</span>
+                <span>{translate('home.describe')}</span>
                 <span className="text-red-600 dark:text-red-400 font-black">*</span>
               </label>
 
@@ -224,7 +234,7 @@ export const Home: React.FC = () => {
               {/* Emergency Type Dropdown */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
-                  Emergency Category (Optional)
+                  {translate('home.category')}
                 </label>
                 <select
                   value={selectedCategory}
@@ -232,15 +242,20 @@ export const Home: React.FC = () => {
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer"
                   disabled={loading}
                 >
-                  <option value="">Auto-Detect from Description</option>
-                  <option value="accident">Road & Traffic Accident</option>
-                  <option value="fire">Fire & Smoke Inhalation</option>
-                  <option value="medical">Medical Emergency / Trauma</option>
-                  <option value="flood">Flood / Water Hazard</option>
-                  <option value="earthquake">Earthquake / Structural Collapse</option>
+                  <option value="">{translate('home.autoDetect')}</option>
+                  <option value="flood">Flood</option>
+                  <option value="fire">Fire</option>
+                  <option value="road_accident">Road Accident</option>
+                  <option value="medical_emergency">Medical Emergency</option>
+                  <option value="earthquake">Earthquake</option>
+                  <option value="cyclone_storm">Cyclone / Severe Storm</option>
+                  <option value="landslide">Landslide</option>
+                  <option value="tsunami">Tsunami</option>
+                  <option value="building_collapse">Building Collapse</option>
                   <option value="missing_person">Missing Person</option>
-                  <option value="chemical">Gas Leak / Toxic Chemical Hazard</option>
-                  <option value="other">Other Crisis</option>
+                  <option value="gas_chemical_leak">Gas or Chemical Leak</option>
+                  <option value="electrical_emergency">Electrical Emergency</option>
+                  <option value="other_unknown">Other / Unknown Emergency</option>
                 </select>
               </div>
 
@@ -248,14 +263,14 @@ export const Home: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                    GPS Coordinates Access
+                    {translate('home.location')}
                   </label>
                   <button
                     type="button"
                     onClick={refreshLocation}
                     className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
                   >
-                    Refresh GPS
+                    {translate('home.refreshGps')}
                   </button>
                 </div>
                 <div
@@ -301,7 +316,7 @@ export const Home: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <span>Get Immediate Emergency Help</span>
+                    <span>{translate('home.getHelp')}</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
@@ -315,7 +330,7 @@ export const Home: React.FC = () => {
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" />
-              <span>Quick Emergency Categories</span>
+              <span>{translate('home.quickCategories')}</span>
             </h3>
             <span className="text-xs text-slate-400">Click for instant pre-filled triage</span>
           </div>

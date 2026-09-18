@@ -18,7 +18,7 @@ import { contactsAPI } from '../services/api';
 import { PersonalICEContact } from '../types';
 
 export const Settings: React.FC = () => {
-  const { language, setLanguage, location, refreshLocation } = useEmergency();
+  const { language, setLanguage, location, refreshLocation, translate } = useEmergency();
 
   const [iceContacts, setIceContacts] = useState<PersonalICEContact[]>([]);
   const [newIceName, setNewIceName] = useState('');
@@ -100,18 +100,16 @@ export const Settings: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <SettingsIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              Settings & Emergency Preferences
-            </h1>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{translate('settings.title')}</h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Configure default language, personal In Case of Emergency (ICE) contacts, and privacy.
+            {translate('settings.subtitle')}
           </p>
         </div>
 
         {savedNotice && (
           <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold animate-in fade-in">
-            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Preferences Saved
+            <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> {translate('settings.saved')}
           </span>
         )}
       </div>
@@ -121,7 +119,7 @@ export const Settings: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4 transition-colors">
           <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-base">
             <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <h3>Language & Localization</h3>
+            <h3>{translate('settings.language')}</h3>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Emergency safety steps and AI translations will automatically prioritize this language.
@@ -154,7 +152,7 @@ export const Settings: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4 transition-colors">
           <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-base">
             <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <h3>Location & Geolocation</h3>
+            <h3>{translate('settings.location')}</h3>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Your GPS coordinates are used to rank nearby hospitals and compute driving routes.
@@ -203,7 +201,7 @@ export const Settings: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold text-base">
             <Users className="w-5 h-5 text-red-600 dark:text-red-400" />
-            <h3>Personal ICE (In Case of Emergency) Contacts</h3>
+            <h3>{translate('settings.contacts')}</h3>
           </div>
           <span className="text-xs text-slate-400 dark:text-slate-500">
             Family & trusted friends to alert during severe incidents

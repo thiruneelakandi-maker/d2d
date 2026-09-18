@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldAlert, Lock, Mail, User, Phone, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useEmergency } from '../context/EmergencyContext';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login, register } = useAuth();
+  const { translate } = useEmergency();
 
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState('');
@@ -32,7 +34,7 @@ export const Login: React.FC = () => {
       setError(
         err.response?.data?.detail ||
           err.response?.data?.error ||
-          'Authentication failed. Please check credentials.'
+          translate('auth.failed')
       );
     } finally {
       setLoading(false);
@@ -47,12 +49,12 @@ export const Login: React.FC = () => {
             <ShieldAlert className="w-7 h-7" />
           </div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-            {isRegister ? 'Create Responder Account' : 'Sign In to Assistant'}
+            {isRegister ? translate('auth.registerTitle') : translate('auth.loginTitle')}
           </h2>
           <p className="text-xs sm:text-sm text-slate-500">
             {isRegister
-              ? 'Save incident history, register ICE contacts, and access personal emergency preferences.'
-              : 'Access your emergency history and registered emergency profile.'}
+              ? translate('auth.registerSubtitle')
+              : translate('auth.loginSubtitle')}
           </p>
         </div>
 
@@ -67,7 +69,7 @@ export const Login: React.FC = () => {
           {isRegister && (
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Full Name
+                {translate('auth.fullName')}
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -85,7 +87,7 @@ export const Login: React.FC = () => {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Email Address
+                {translate('auth.email')}
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -102,7 +104,7 @@ export const Login: React.FC = () => {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Password
+                {translate('auth.password')}
             </label>
             <div className="relative">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -121,7 +123,7 @@ export const Login: React.FC = () => {
           {isRegister && (
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                Emergency Phone Number (Optional)
+                {translate('auth.phone')}
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -145,7 +147,7 @@ export const Login: React.FC = () => {
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <>
-                <span>{isRegister ? 'Complete Registration' : 'Sign In'}</span>
+                <span>{isRegister ? translate('auth.submitRegister') : translate('auth.submitLogin')}</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -162,8 +164,8 @@ export const Login: React.FC = () => {
             className="text-xs font-semibold text-blue-600 hover:underline cursor-pointer"
           >
             {isRegister
-              ? 'Already registered? Sign in to existing account'
-              : "Don't have an account? Create one now"}
+              ? translate('auth.existing')
+              : translate('auth.new')}
           </button>
         </div>
       </div>
