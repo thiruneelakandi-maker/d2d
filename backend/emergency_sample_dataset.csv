@@ -1,0 +1,4 @@
+id,emergency_type,priority,instruction,recommended_service,verification
+1,fire,1,Evacuate immediately and call local fire services,Fire Department,verified
+2,medical,2,Perform CPR if unresponsive; call ambulance,EMS,unverified
+3,fire,1,Evacuate immediately and call local fire services,Fire Department,verified
