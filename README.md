@@ -1,32 +1,61 @@
-# React + TypeScript + Vite
+# AI Emergency Communication and Information Assistant - Backend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+This folder contains the Django REST Framework backend for the AI Emergency Communication and Information Assistant.
 
-Currently, two official plugins are available:
+## Quickstart (Windows)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Create a virtual environment:
 
-## React Compiler
+```powershell
+python -m venv venv
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. Activate the virtual environment (Windows PowerShell):
 
-## Expanding the Oxlint configuration
+```powershell
+venv\Scripts\Activate
+```
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+3. Install requirements:
+
+```powershell
+pip install -r requirements.txt
+```
+
+4. Copy `.env.example` to `.env` and configure `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`, and `CORS_ALLOWED_ORIGINS`:
+
+```powershell
+copy .env.example .env
+```
+
+5. Run migrations:
+
+```powershell
+python manage.py migrate
+```
+
+6. Start the development server:
+
+```powershell
+python manage.py runserver
+```
+
+## Health check
+
+GET http://127.0.0.1:8000/api/health/
+
+Response:
 
 ```json
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+  "status": "ok",
+  "message": "Emergency Assistant Backend is running"
 }
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Notes
+- JWT authentication protects emergency creation, history, detail, and status updates.
+- AI analysis supports all Sprint 1 emergency categories and falls back to verified local guidance when an external model is unavailable.
+- The database defaults to SQLite for easy local setup. Set `USE_POSTGRES=True` and the PostgreSQL variables in `.env` for PostgreSQL.
+- The Vite frontend uses `http://localhost:5173` by default; keep that origin in `CORS_ALLOWED_ORIGINS` for local development.
+- See the repository-level [SPRINT1_CHECKLIST.md](../SPRINT1_CHECKLIST.md) for implemented requirements and remaining scale/deployment work.
